@@ -1,21 +1,112 @@
 <div class="app-shell">
   <app-sidebar></app-sidebar>
+
   <main class="main-content">
     <div class="page-header">
       <div>
         <h2>Settings</h2>
-        <p>Manage your account, brand profile, and preferences.</p>
+        <p>Manage your account and platform preferences.</p>
       </div>
     </div>
-    <div class="coming-soon-card">
-      <div class="cs-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
+
+    <div class="settings-stack">
+
+      <!-- Appearance -->
+      <div class="settings-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M18.66 5.34l1.41-1.41"/>
+          </svg>
+          <h3>Appearance</h3>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <p class="setting-label">Theme</p>
+            <p class="setting-desc">Switch between light and dark mode across the platform.</p>
+          </div>
+          <div class="theme-toggle-wrap">
+            <span class="theme-opt" [class.active]="!theme.isDark()">Light</span>
+            <button
+              class="toggle-switch"
+              [class.on]="theme.isDark()"
+              (click)="theme.toggle()"
+              type="button"
+              [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <span class="toggle-knob"></span>
+            </button>
+            <span class="theme-opt" [class.active]="theme.isDark()">Dark</span>
+          </div>
+        </div>
+
+        <div class="theme-preview">
+          <div class="preview-tile light-tile" [class.active-tile]="!theme.isDark()" (click)="theme.setDark(false)">
+            <div class="tile-mock">
+              <div class="mock-bar light"></div>
+              <div class="mock-card light"></div>
+            </div>
+            <span>Light</span>
+          </div>
+          <div class="preview-tile dark-tile" [class.active-tile]="theme.isDark()" (click)="theme.setDark(true)">
+            <div class="tile-mock">
+              <div class="mock-bar dark"></div>
+              <div class="mock-card dark"></div>
+            </div>
+            <span>Dark</span>
+          </div>
+        </div>
       </div>
-      <h3>Settings coming soon</h3>
-      <p>Configure your brand profile, notification preferences, API connections, and team members.</p>
+
+      <!-- Account info -->
+      <div class="settings-card" *ngIf="user">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <h3>Account</h3>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-row">
+            <span class="info-label">Owner name</span>
+            <span class="info-value">{{ user.owner_name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ user.email }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Business</span>
+            <span class="info-value">{{ user.business_name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Business type</span>
+            <span class="info-value">
+              <span class="type-badge">{{ user.business_type }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session / logout -->
+      <div class="settings-card danger-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <h3>Session</h3>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <p class="setting-label">Sign out</p>
+            <p class="setting-desc">End your current session and return to the login screen.</p>
+          </div>
+          <button class="btn-logout" (click)="logout()" type="button">Sign out</button>
+        </div>
+      </div>
+
     </div>
   </main>
 </div>

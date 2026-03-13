@@ -6,47 +6,101 @@
     <!-- Welcome banner -->
     <div class="welcome-banner">
       <div class="banner-text">
-        <h3>Good to see you back</h3>
-        <p>Here's how your brand is performing across AI platforms today.</p>
+        <p class="banner-eyebrow">Welcome back</p>
+        <h3>{{ businessName || ownerName || 'your brand' }}</h3>
+        <p class="banner-sub" *ngIf="hasData">Here's how your brand is performing across AI platforms.</p>
+        <p class="banner-sub" *ngIf="!hasData && !loadingData">Run your first simulation to see how AI platforms represent your brand.</p>
       </div>
       <button class="btn-cta" routerLink="/simulations">Run New Simulation</button>
     </div>
 
     <div class="inner">
 
+      <!-- BTS highlight (only if data exists) -->
+      <div class="bts-highlight" *ngIf="hasData && bts">
+        <div class="bts-highlight-left">
+          <p class="bts-hl-label">Brand Trust Score</p>
+          <p class="bts-hl-value" [style.color]="btsColor(bts.overall)">{{ bts.overall }}<span class="bts-hl-unit">/100</span></p>
+          <p class="bts-hl-sub">Last simulation · {{ formatDate(latestSim!.run_at) }}</p>
+        </div>
+        <div class="bts-highlight-bars">
+          <div class="bts-mini-row">
+            <span>Visibility</span>
+            <div class="bts-mini-track"><div class="bts-mini-fill" [style.width.%]="bts.visibility_index" style="background:var(--blue-600)"></div></div>
+            <span>{{ bts.visibility_index }}%</span>
+          </div>
+          <div class="bts-mini-row">
+            <span>Accuracy</span>
+            <div class="bts-mini-track"><div class="bts-mini-fill" [style.width.%]="bts.accuracy_rate" style="background:#16a34a"></div></div>
+            <span>{{ bts.accuracy_rate }}%</span>
+          </div>
+          <div class="bts-mini-row">
+            <span>Sentiment</span>
+            <div class="bts-mini-track"><div class="bts-mini-fill" [style.width.%]="bts.sentiment_score" style="background:var(--gold-500)"></div></div>
+            <span>{{ bts.sentiment_score }}%</span>
+          </div>
+          <div class="bts-mini-row">
+            <span>Hallucination</span>
+            <div class="bts-mini-track"><div class="bts-mini-fill" [style.width.%]="bts.hallucination_rate" style="background:#ef4444"></div></div>
+            <span class="red-text">{{ bts.hallucination_rate }}%</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Metric cards -->
       <div class="metrics-grid">
-        <div class="metric-card">
-          <p class="metric-label">AI Visibility Score</p>
-          <p class="metric-value gold">74<span class="unit">/100</span></p>
-          <p class="metric-trend positive">&#8593; +6 vs last week</p>
+        <div class="metric-card" [class.no-data]="!hasData">
+          <p class="metric-label">Visibility Index</p>
+          <p class="metric-value gold" *ngIf="bts">{{ bts.visibility_index }}<span class="unit">%</span></p>
+          <p class="metric-value placeholder" *ngIf="!bts">—</p>
+          <p class="metric-trend positive" *ngIf="bts">35% weight in BTS</p>
+          <p class="metric-trend neutral" *ngIf="!bts">Run a simulation to unlock</p>
         </div>
-        <div class="metric-card">
-          <p class="metric-label">Mention Rate</p>
-          <p class="metric-value">62<span class="unit">%</span></p>
-          <p class="metric-trend positive">&#8593; +3% vs last week</p>
+        <div class="metric-card" [class.no-data]="!hasData">
+          <p class="metric-label">Accuracy Rate</p>
+          <p class="metric-value" *ngIf="bts">{{ bts.accuracy_rate }}<span class="unit">%</span></p>
+          <p class="metric-value placeholder" *ngIf="!bts">—</p>
+          <p class="metric-trend positive" *ngIf="bts">30% weight in BTS</p>
+          <p class="metric-trend neutral" *ngIf="!bts">Run a simulation to unlock</p>
         </div>
-        <div class="metric-card">
+        <div class="metric-card" [class.no-data]="!hasData">
           <p class="metric-label">Sentiment Score</p>
-          <p class="metric-value">8.1<span class="unit">/10</span></p>
-          <p class="metric-trend neutral">No change</p>
+          <p class="metric-value" *ngIf="bts">{{ bts.sentiment_score }}<span class="unit">%</span></p>
+          <p class="metric-value placeholder" *ngIf="!bts">—</p>
+          <p class="metric-trend neutral" *ngIf="bts">15% weight in BTS</p>
+          <p class="metric-trend neutral" *ngIf="!bts">Run a simulation to unlock</p>
         </div>
-        <div class="metric-card">
+        <div class="metric-card" [class.no-data]="!hasData">
           <p class="metric-label">Simulations Run</p>
-          <p class="metric-value">3</p>
-          <p class="metric-trend neutral">This month</p>
+          <p class="metric-value">{{ simHistory.length || '0' }}</p>
+          <p class="metric-trend positive" *ngIf="simHistory.length > 0">↑ Keep going</p>
+          <p class="metric-trend neutral" *ngIf="simHistory.length === 0">None yet</p>
         </div>
       </div>
 
       <!-- Content grid -->
       <div class="content-grid">
 
+        <!-- Recent Simulations -->
         <div class="content-card">
           <div class="content-card-head">
             <h3>Recent Simulations</h3>
             <a routerLink="/simulations">View all</a>
           </div>
-          <div class="empty-state">
+
+          <!-- Has data -->
+          <div class="sim-list" *ngIf="recentSims.length > 0">
+            <div class="sim-row" *ngFor="let s of recentSims">
+              <div class="sim-row-left">
+                <span class="sim-date">{{ formatDate(s.run_at) }}</span>
+                <span class="sim-issues">{{ s.issue_count }} issue{{ s.issue_count === 1 ? '' : 's' }} found</span>
+              </div>
+              <span class="sim-bts" [style.color]="btsColor(s.bts)">BTS {{ s.bts }}</span>
+            </div>
+          </div>
+
+          <!-- Empty -->
+          <div class="empty-state" *ngIf="recentSims.length === 0 && !loadingData">
             <div class="empty-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="5 3 19 12 5 21 5 3"/>
@@ -57,12 +111,32 @@
           </div>
         </div>
 
+        <!-- Top Insights -->
         <div class="content-card">
           <div class="content-card-head">
             <h3>Top Insights</h3>
-            <a routerLink="/insights">View all</a>
+            <a routerLink="/simulations" *ngIf="hasData">View details</a>
           </div>
-          <div class="empty-state">
+
+          <!-- Has issues -->
+          <div class="insights-list" *ngIf="bts && bts.issues.length > 0">
+            <div class="insight-row" *ngFor="let iss of bts.issues.slice(0, 3)">
+              <span class="insight-dot" [style.background]="iss.type === 'visibility' ? 'var(--blue-600)' : iss.type === 'pricing' ? '#ec4899' : iss.type === 'outdated' ? 'var(--gold-500)' : '#ef4444'"></span>
+              <div class="insight-text">
+                <p class="insight-ai">{{ iss.ai | uppercase }} · +{{ iss.bts_gain }} BTS potential</p>
+                <p class="insight-desc">{{ iss.description }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- No issues (brand doing well) -->
+          <div class="no-issues-msg" *ngIf="bts && bts.issues.length === 0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p>No issues detected — your brand is well represented.</p>
+          </div>
+
+          <!-- Empty (new user) -->
+          <div class="empty-state" *ngIf="!hasData && !loadingData">
             <div class="empty-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>

@@ -2,8 +2,7 @@
 
   <div class="sidebar-top">
     <div class="sidebar-logo">
-      <span class="logo-mark">T</span>
-      <span class="logo-name">Trulens</span>
+      <img src="assets/logo.png" alt="TruLens" class="logo-img" />
     </div>
   </div>
 
@@ -43,10 +42,10 @@
 
   <div class="sidebar-bottom">
     <div class="user-badge">
-      <div class="user-avatar">Y</div>
+      <div class="user-avatar">{{ initial }}</div>
       <div class="user-info">
-        <p class="user-name">Your Brand</p>
-        <p class="user-plan">Free Plan</p>
+        <p class="user-name">{{ user?.business_name || 'Your Brand' }}</p>
+        <p class="user-plan">{{ user?.business_type || 'Free Plan' }}</p>
       </div>
     </div>
   </div>

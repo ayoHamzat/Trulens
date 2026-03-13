@@ -1,5 +1,5 @@
 /* ============================================================
-   Trulens Design System — Global Styles
+   TruLens Design System — Global Styles
    Palette: 50% blue · 30% warm white/cream · 20% gold
    ============================================================ */
 
@@ -11,6 +11,7 @@
 
 :root {
   /* Blues */
+  --blue-950: #060f1e;
   --blue-900: #0b1f38;
   --blue-800: #142d4f;
   --blue-700: #1c3f6e;
@@ -50,11 +51,33 @@
   --radius-lg: 16px;
   --radius-xl: 22px;
 
+  /* Semantic text color */
+  --text-primary: #0b1f38;
+
   /* Shadows — warm-tinted */
   --shadow-xs: 0 1px 3px rgba(26, 23, 20, 0.06);
   --shadow-sm: 0 2px 10px rgba(26, 23, 20, 0.08);
   --shadow-md: 0 8px 24px rgba(26, 23, 20, 0.10);
   --shadow-lg: 0 20px 56px rgba(26, 23, 20, 0.13);
+}
+
+/* ── Dark mode overrides ── */
+[data-theme="dark"] {
+  --cream:    #0f1923;
+  --cream-2:  #16202d;
+  --white:    #1a2636;
+  --gray-900: #f1f5f9;
+  --gray-700: #cbd5e1;
+  --gray-600: #94a3b8;
+  --gray-500: #7a8fa8;
+  --gray-400: #7a8fa8;
+  --gray-200: #1e2d3d;
+  --gray-100: #182030;
+  --text-primary: #f1f5f9;
+  --shadow-xs: 0 1px 3px rgba(0,0,0,0.35);
+  --shadow-sm: 0 2px 10px rgba(0,0,0,0.45);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.55);
+  --shadow-lg: 0 20px 56px rgba(0,0,0,0.65);
 }
 
 html, body {
@@ -65,6 +88,7 @@ html, body {
   background: var(--cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 h1, h2, h3, h4 {

@@ -1,21 +1,220 @@
 <div class="app-shell">
   <app-sidebar></app-sidebar>
+
   <main class="main-content">
+
+    <!-- Page header -->
     <div class="page-header">
       <div>
-        <h2>Simulations</h2>
-        <p>Test how AI assistants respond to queries about your brand.</p>
+        <h2>AI Stress Test</h2>
+        <p>See exactly how ChatGPT, Gemini, Claude &amp; Perplexity represent your brand to real shoppers.</p>
       </div>
-      <button class="btn-cta">New Simulation</button>
+      <button class="btn-run" (click)="runSimulation()" [disabled]="running">
+        <svg *ngIf="!running" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span class="btn-spinner" *ngIf="running"></span>
+        {{ running ? 'Running simulation…' : 'Run Simulation' }}
+      </button>
     </div>
-    <div class="coming-soon-card">
-      <div class="cs-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
+
+    <!-- Running loader -->
+    <div *ngIf="running" class="running-card">
+      <div class="running-inner">
+        <div class="running-ring"><div class="running-spinner"></div></div>
+        <h3>Firing 5 consumer queries across 4 AI platforms…</h3>
+        <p>Detecting hallucinations, pricing errors &amp; visibility gaps. This takes ~10 seconds.</p>
+        <div class="ai-chips">
+          <span class="ai-chip chatgpt">ChatGPT</span>
+          <span class="ai-chip gemini">Gemini</span>
+          <span class="ai-chip claude">Claude</span>
+          <span class="ai-chip perplexity">Perplexity</span>
+        </div>
       </div>
-      <h3>Simulations coming soon</h3>
-      <p>Run AI prompts and see exactly how ChatGPT, Gemini, and Claude describe your brand to shoppers.</p>
     </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!running && !latest" class="empty-shell">
+      <div class="empty-card">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+          </svg>
+        </div>
+        <h3>No simulations yet</h3>
+        <p>Hit <strong>Run Simulation</strong> to fire your first AI stress test across ChatGPT, Gemini, Claude, and Perplexity.</p>
+        <button class="btn-run small" (click)="runSimulation()">Run your first simulation →</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div *ngIf="!running && latest && bts" class="results-shell">
+
+      <!-- BTS Score card -->
+      <div class="bts-card">
+        <div class="bts-gauge-col">
+          <svg class="bts-gauge" viewBox="0 0 128 128">
+            <!-- track -->
+            <circle cx="64" cy="64" r="54"
+              fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="11"
+              stroke-dasharray="254.5 84.8"
+              transform="rotate(135 64 64)" stroke-linecap="round"/>
+            <!-- fill -->
+            <circle cx="64" cy="64" r="54"
+              fill="none"
+              [attr.stroke]="btsColor(bts.overall)"
+              stroke-width="11"
+              [attr.stroke-dasharray]="gaugeDash(bts.overall)"
+              transform="rotate(135 64 64)"
+              stroke-linecap="round"
+              style="transition: stroke-dasharray 0.6s cubic-bezier(0.4,0,0.2,1)"/>
+            <text x="64" y="60" text-anchor="middle" class="gauge-num">{{ bts.overall }}</text>
+            <text x="64" y="76" text-anchor="middle" class="gauge-label">BTS</text>
+          </svg>
+          <p class="bts-run-time">Last run: {{ formatDate(latest.run_at) }}</p>
+        </div>
+
+        <div class="bts-scores-col">
+          <h3>Brand Trust Score</h3>
+          <p class="bts-sub">Composite of 4 weighted metrics across all AI platforms.</p>
+
+          <div class="sub-scores">
+            <div class="sub-row">
+              <span class="sub-label">Visibility Index <span class="sub-weight">35%</span></span>
+              <div class="sub-bar-wrap">
+                <div class="sub-bar" [style.width.%]="bts.visibility_index" style="background: var(--blue-600)"></div>
+              </div>
+              <span class="sub-val">{{ bts.visibility_index }}%</span>
+            </div>
+            <div class="sub-row">
+              <span class="sub-label">Accuracy Rate <span class="sub-weight">30%</span></span>
+              <div class="sub-bar-wrap">
+                <div class="sub-bar" [style.width.%]="bts.accuracy_rate" style="background: #16a34a"></div>
+              </div>
+              <span class="sub-val">{{ bts.accuracy_rate }}%</span>
+            </div>
+            <div class="sub-row">
+              <span class="sub-label">Sentiment Score <span class="sub-weight">15%</span></span>
+              <div class="sub-bar-wrap">
+                <div class="sub-bar" [style.width.%]="bts.sentiment_score" style="background: var(--gold-500)"></div>
+              </div>
+              <span class="sub-val">{{ bts.sentiment_score }}%</span>
+            </div>
+            <div class="sub-row">
+              <span class="sub-label">Hallucination Rate <span class="sub-weight">20%</span></span>
+              <div class="sub-bar-wrap">
+                <div class="sub-bar" [style.width.%]="bts.hallucination_rate" style="background: #ef4444"></div>
+              </div>
+              <span class="sub-val red">{{ bts.hallucination_rate }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Comparison -->
+      <div class="section-head">
+        <h3>Per-AI Breakdown</h3>
+        <p>How each AI assistant represents your brand independently.</p>
+      </div>
+      <div class="ai-grid">
+        <div class="ai-card" *ngFor="let ai of aiEntries">
+          <div class="ai-card-top">
+            <span class="ai-dot" [style.background]="ai.color"></span>
+            <span class="ai-name">{{ ai.label }}</span>
+            <span class="ai-bts" [style.color]="btsColor(ai.score.bts)">{{ ai.score.bts }}</span>
+          </div>
+          <div class="ai-bars">
+            <div class="ai-bar-row">
+              <span>Visibility</span>
+              <div class="ai-bar-track"><div class="ai-bar-fill" [style.width.%]="ai.score.visibility" [style.background]="ai.color"></div></div>
+              <span>{{ ai.score.visibility }}%</span>
+            </div>
+            <div class="ai-bar-row">
+              <span>Accuracy</span>
+              <div class="ai-bar-track"><div class="ai-bar-fill" [style.width.%]="ai.score.accuracy" [style.background]="ai.color"></div></div>
+              <span>{{ ai.score.accuracy }}%</span>
+            </div>
+            <div class="ai-bar-row">
+              <span>Sentiment</span>
+              <div class="ai-bar-track"><div class="ai-bar-fill" [style.width.%]="ai.score.sentiment" [style.background]="ai.color"></div></div>
+              <span>{{ ai.score.sentiment }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Queries tested -->
+      <div class="section-head">
+        <h3>Queries Tested</h3>
+        <p>{{ latest.results.queries.length }} consumer questions fired across all AI platforms.</p>
+      </div>
+      <div class="queries-list">
+        <div class="query-row" *ngFor="let q of latest.results.queries; let i = index">
+          <button class="query-toggle" (click)="toggleQuery(i)" type="button">
+            <span class="q-num">{{ i + 1 }}</span>
+            <span class="q-text">{{ q.query }}</span>
+            <svg class="q-chevron" [class.open]="expandedQuery === i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="query-responses" *ngIf="expandedQuery === i">
+            <div class="response-item" *ngFor="let ai of aiKeys">
+              <div class="resp-header">
+                <span class="resp-ai-dot" [style.background]="aiColor(ai)"></span>
+                <span class="resp-ai-name">{{ aiLabel(ai) }}</span>
+                <span class="resp-badge" [class]="'badge-' + q.responses[ai].sentiment">
+                  {{ q.responses[ai].sentiment }}
+                </span>
+                <span *ngIf="q.responses[ai].issue" class="resp-issue-badge">
+                  ⚠ {{ q.responses[ai].issue }}
+                </span>
+              </div>
+              <p class="resp-text">{{ q.responses[ai].text }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issues & Optimisation -->
+      <div *ngIf="issues.length > 0">
+        <div class="section-head">
+          <h3>Issues Detected</h3>
+          <p>{{ issues.length }} issue{{ issues.length === 1 ? '' : 's' }} found. Each fix comes with a projected BTS gain.</p>
+        </div>
+        <div class="issues-list">
+          <div class="issue-card" *ngFor="let iss of issues">
+            <div class="issue-top">
+              <span class="issue-ai-dot" [style.background]="aiColor(iss.ai)"></span>
+              <span class="issue-ai">{{ aiLabel(iss.ai) }}</span>
+              <span class="issue-type-badge" [class]="'type-' + iss.type">{{ iss.type }}</span>
+              <span class="bts-gain">+{{ iss.bts_gain }} BTS</span>
+            </div>
+            <p class="issue-desc">{{ iss.description }}</p>
+            <div class="issue-fix">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>{{ iss.fix }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No issues -->
+      <div *ngIf="issues.length === 0" class="no-issues">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>No issues detected — your brand is represented accurately across all AI platforms.</span>
+      </div>
+
+      <!-- History -->
+      <div *ngIf="history.length > 1">
+        <div class="section-head">
+          <h3>Simulation History</h3>
+        </div>
+        <div class="history-list">
+          <div class="history-row" *ngFor="let h of history">
+            <span class="history-date">{{ formatDate(h.run_at) }}</span>
+            <span class="history-bts" [style.color]="btsColor(h.bts)">BTS {{ h.bts }}</span>
+            <span class="history-issues">{{ h.issue_count }} issue{{ h.issue_count === 1 ? '' : 's' }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /results-shell -->
+
   </main>
 </div>

@@ -1,9 +1,12 @@
 import os
 import json
+import logging
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 from ..database import get_db
 from ..models import User, BusinessProfile
@@ -14,10 +17,9 @@ load_dotenv()
 
 router = APIRouter(prefix="/onboarding", tags=["onboarding"])
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-2.0-flash-lite:generateContent"
+    "gemini-2.5-flash:generateContent"
 )
 
 FALLBACK_QUESTIONS = [
@@ -37,42 +39,41 @@ FALLBACK_QUESTIONS = [
 
 @router.post("/questions")
 async def get_questions(payload: OnboardingQuestionsRequest, current_user: User = Depends(get_current_user)):
-    if not GEMINI_API_KEY or GEMINI_API_KEY == "YOUR_GEMINI_API_KEY_HERE":
+    gemini_api_key = os.getenv("GEMINI_API_KEY", "")
+
+    if not gemini_api_key or gemini_api_key == "YOUR_GEMINI_API_KEY_HERE":
+        logger.warning("GEMINI_API_KEY not set — returning fallback questions")
         return FALLBACK_QUESTIONS
 
-    prompt = f"""You are helping a "{payload.business_type}" business owner set up an AI brand monitoring profile.
+    logger.info(f"Calling Gemini for business type: {payload.business_type}")
 
-Generate exactly 7 thoughtful questions to understand their business. Cover: target customers, top products or services, price range, primary geographic market, main competitors, brand personality/tone, and what makes them unique.
+    prompt = f"""Create 7 short onboarding questions for a "{payload.business_type}" business. Cover: target customers, top products/services, price range, primary market, competitors, brand tone, and unique value.
 
-Return ONLY a valid JSON array — no markdown, no explanation, no code fences. Use this exact structure:
-[
-  {{
-    "label": "The question text",
-    "field_name": "snake_case_key",
-    "input_type": "text",
-    "options": []
-  }}
-]
+Return ONLY a JSON array, no markdown. Format:
+[{{"label":"Question?","field_name":"snake_key","input_type":"text","options":[]}}]
 
 Rules:
-- Use "select" with a populated "options" array when a predefined list makes sense.
-- Use "textarea" for questions expecting longer, descriptive answers.
-- Use "text" for short open-ended answers.
-- Keep labels conversational and natural, not robotic."""
+- Labels must be under 8 words, conversational.
+- Use "select" + options array for predictable answers.
+- Use "textarea" for open-ended answers.
+- Use "text" for short answers."""
 
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
             resp = await client.post(
                 GEMINI_URL,
-                params={"key": GEMINI_API_KEY},
+                params={"key": gemini_api_key},
                 json={"contents": [{"parts": [{"text": prompt}]}]},
             )
             resp.raise_for_status()
             data = resp.json()
             raw_text: str = data["candidates"][0]["content"]["parts"][0]["text"]
             cleaned = raw_text.replace("```json", "").replace("```", "").strip()
-            return json.loads(cleaned)
-    except Exception:
+            questions = json.loads(cleaned)
+            logger.info(f"Gemini returned {len(questions)} questions successfully")
+            return questions
+    except Exception as e:
+        logger.error(f"Gemini call failed: {e} — returning fallback questions")
         return FALLBACK_QUESTIONS
 
 

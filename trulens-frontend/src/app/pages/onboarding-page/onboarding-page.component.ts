@@ -26,6 +26,7 @@ export class OnboardingPageComponent implements OnInit {
   errorMessage = '';
   questions: OnboardingQuestion[] = [];
   answers: Record<string, any> = {};
+  currentIndex = 0;
 
   get businessType(): string {
     return this.userProfile.businessType || 'Retail';
@@ -35,6 +36,19 @@ export class OnboardingPageComponent implements OnInit {
     return this.userProfile.businessName;
   }
 
+  get currentQuestion(): OnboardingQuestion | null {
+    return this.questions[this.currentIndex] ?? null;
+  }
+
+  get progress(): number {
+    if (!this.questions.length) return 0;
+    return Math.round(((this.currentIndex + 1) / this.questions.length) * 100);
+  }
+
+  get isLast(): boolean {
+    return this.currentIndex === this.questions.length - 1;
+  }
+
   ngOnInit(): void {
     this.loadQuestions();
   }
@@ -42,6 +56,7 @@ export class OnboardingPageComponent implements OnInit {
   loadQuestions(): void {
     this.loading = true;
     this.error = false;
+    this.currentIndex = 0;
 
     this.gemini.generateOnboardingQuestions(this.businessType).subscribe({
       next: (questions) => {
@@ -56,19 +71,23 @@ export class OnboardingPageComponent implements OnInit {
     });
   }
 
+  next(): void {
+    if (this.currentIndex < this.questions.length - 1) {
+      this.currentIndex++;
+    }
+  }
+
+  prev(): void {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
   saveProfile(): void {
     this.saving = true;
-
     this.http.post(`${environment.apiUrl}/onboarding/save`, { answers: this.answers }).subscribe({
-      next: () => {
-        this.saving = false;
-        this.router.navigate(['/dashboard']);
-      },
-      error: () => {
-        // Navigate anyway — profile save is non-critical
-        this.saving = false;
-        this.router.navigate(['/dashboard']);
-      }
+      next: () => { this.saving = false; this.router.navigate(['/dashboard']); },
+      error: () => { this.saving = false; this.router.navigate(['/dashboard']); }
     });
   }
 }

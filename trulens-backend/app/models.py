@@ -23,3 +23,12 @@ class BusinessProfile(Base):
     answers = Column(JSON, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class SimulationRun(Base):
+    __tablename__ = "simulation_runs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    results = Column(JSON, nullable=False)
+    run_at = Column(DateTime(timezone=True), server_default=func.now())

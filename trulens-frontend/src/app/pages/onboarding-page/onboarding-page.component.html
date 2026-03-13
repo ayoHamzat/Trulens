@@ -1,82 +1,135 @@
 <div class="onboarding-layout">
 
-  <!-- Top bar -->
+  <!-- Header -->
   <header class="onboarding-header">
     <div class="header-logo">
       <span class="logo-mark">T</span>
-      <span class="logo-name">Trulens</span>
+      <span class="logo-name">TruLens</span>
     </div>
-    <span class="step-badge">Step 1 of 2 — Business Profile</span>
+    <span class="step-badge" *ngIf="!loading && !error">
+      {{ currentIndex + 1 }} of {{ questions.length }}
+    </span>
   </header>
 
   <!-- Body -->
   <div class="onboarding-body">
-    <div class="onboarding-card">
 
+    <!-- Loading -->
+    <div *ngIf="loading" class="onboarding-card">
       <div class="card-header">
         <div class="biz-type-chip">{{ businessType }}</div>
-        <h2>Tell us about your business</h2>
-        <p>Gemini is generating 7 tailored questions for your {{ businessType }} profile.</p>
+        <h2>Building your profile</h2>
+        <p>Crafting questions tailored to your business…</p>
+      </div>
+      <div class="loading-state">
+        <div class="pulse-ring"><div class="spinner"></div></div>
+        <p class="loading-title">One moment…</p>
+        <p class="loading-sub">Generating personalised questions for your {{ businessType }} business.</p>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error && !loading" class="onboarding-card">
+      <div class="card-header">
+        <div class="biz-type-chip">{{ businessType }}</div>
+        <h2>Something went wrong</h2>
+        <p>We couldn't load your questions.</p>
+      </div>
+      <div class="error-state">
+        <p>{{ errorMessage }}</p>
+        <button class="btn-retry" (click)="loadQuestions()">Try again</button>
+      </div>
+    </div>
+
+    <!-- Wizard -->
+    <div *ngIf="!loading && !error && currentQuestion" class="wizard-shell">
+
+      <!-- Progress track -->
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progress"></div>
       </div>
 
-      <!-- Loading -->
-      <div *ngIf="loading" class="loading-state">
-        <div class="pulse-ring">
-          <div class="spinner"></div>
+      <!-- Question card -->
+      <div class="question-card">
+
+        <div class="question-meta">
+          <span class="q-chip">{{ businessType }}</span>
+          <span class="q-counter">{{ currentIndex + 1 }}&thinsp;/&thinsp;{{ questions.length }}</span>
         </div>
-        <p class="loading-title">Generating your questions…</p>
-        <p class="loading-sub">Gemini is crafting personalised questions for your {{ businessType }} business.</p>
-      </div>
 
-      <!-- Error -->
-      <div *ngIf="error && !loading" class="error-state">
-        <p><strong>Could not reach Gemini.</strong></p>
-        <p class="error-detail">{{ errorMessage }}</p>
-        <button class="btn-retry" (click)="loadQuestions()">Retry</button>
-      </div>
+        <h2 class="question-text">{{ currentQuestion.label }}</h2>
 
-      <!-- Form -->
-      <form *ngIf="!loading && !error" (ngSubmit)="saveProfile()" class="profile-form">
-
-        <div class="field" *ngFor="let q of questions; let i = index">
-          <label>
-            <span class="q-num">{{ i + 1 }}</span>
-            {{ q.label }}
-          </label>
+        <div class="answer-area">
 
           <input
-            *ngIf="q.input_type === 'text'"
-            [(ngModel)]="answers[q.field_name]"
-            [name]="q.field_name"
+            *ngIf="currentQuestion.input_type === 'text'"
+            [(ngModel)]="answers[currentQuestion.field_name]"
+            [name]="currentQuestion.field_name"
+            class="answer-input"
             placeholder="Your answer…"
+            autocomplete="off"
           />
 
-          <select
-            *ngIf="q.input_type === 'select'"
-            [(ngModel)]="answers[q.field_name]"
-            [name]="q.field_name"
-          >
-            <option value="" disabled selected>Select an option</option>
-            <option *ngFor="let opt of q.options" [value]="opt">{{ opt }}</option>
-          </select>
+          <div *ngIf="currentQuestion.input_type === 'select'" class="select-options">
+            <button
+              *ngFor="let opt of currentQuestion.options"
+              class="option-btn"
+              [class.selected]="answers[currentQuestion.field_name] === opt"
+              (click)="answers[currentQuestion.field_name] = opt"
+              type="button"
+            >{{ opt }}</button>
+          </div>
 
           <textarea
-            *ngIf="q.input_type === 'textarea'"
-            [(ngModel)]="answers[q.field_name]"
-            [name]="q.field_name"
-            rows="3"
+            *ngIf="currentQuestion.input_type === 'textarea'"
+            [(ngModel)]="answers[currentQuestion.field_name]"
+            [name]="currentQuestion.field_name"
+            class="answer-input answer-textarea"
+            rows="4"
             placeholder="Your answer…"
           ></textarea>
+
         </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn-cta" [disabled]="saving">
-            {{ saving ? 'Saving…' : 'Save and Continue →' }}
+        <!-- Navigation -->
+        <div class="wizard-nav">
+          <button class="btn-back" *ngIf="currentIndex > 0" (click)="prev()" type="button">
+            ← Back
+          </button>
+          <div class="nav-spacer" *ngIf="currentIndex === 0"></div>
+
+          <button
+            *ngIf="!isLast"
+            class="btn-next"
+            (click)="next()"
+            type="button"
+          >
+            Next →
+          </button>
+
+          <button
+            *ngIf="isLast"
+            class="btn-finish"
+            (click)="saveProfile()"
+            [disabled]="saving"
+            type="button"
+          >
+            {{ saving ? 'Saving…' : 'Finish & Go to Dashboard →' }}
           </button>
         </div>
 
-      </form>
+      </div>
+
+      <!-- Step dots -->
+      <div class="step-dots">
+        <span
+          *ngFor="let q of questions; let i = index"
+          class="dot"
+          [class.active]="i === currentIndex"
+          [class.done]="i < currentIndex"
+        ></span>
+      </div>
+
     </div>
   </div>
-
 </div>

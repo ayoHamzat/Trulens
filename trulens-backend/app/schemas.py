@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Any
+from datetime import datetime
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -45,3 +46,20 @@ class SaveProfileRequest(BaseModel):
 
 class SaveProfileResponse(BaseModel):
     message: str
+
+
+# ── Simulations ───────────────────────────────────────────────────────────────
+
+class SimulationRunOut(BaseModel):
+    id: int
+    run_at: datetime
+    results: dict[str, Any]
+
+    model_config = {"from_attributes": True}
+
+
+class SimulationSummary(BaseModel):
+    id: int
+    run_at: datetime
+    bts: int | None
+    issue_count: int

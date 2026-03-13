@@ -1,20 +1,188 @@
 <div class="app-shell">
   <app-sidebar></app-sidebar>
+
   <main class="main-content">
+
     <div class="page-header">
       <div>
         <h2>Insights</h2>
-        <p>Understand how AI perceives and recommends your brand.</p>
+        <p *ngIf="latest">Analysis from simulation · {{ formatDate(latest.run_at) }}</p>
+        <p *ngIf="!latest && !loading">Understand how AI platforms perceive and recommend your brand.</p>
+      </div>
+      <a class="btn-sim" routerLink="/simulations">Run New Simulation</a>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && !latest" class="empty-shell">
+      <div class="empty-card">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <h3>No insights yet</h3>
+        <p>Run a simulation to see how AI platforms like ChatGPT, Gemini, Claude, and Perplexity represent your brand.</p>
+        <a routerLink="/simulations" class="btn-sim small">Run your first simulation →</a>
       </div>
     </div>
-    <div class="coming-soon-card">
-      <div class="cs-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
+
+    <!-- Insights content -->
+    <div *ngIf="!loading && latest && bts" class="insights-body">
+
+      <!-- BTS + Highlights row -->
+      <div class="top-row">
+
+        <!-- BTS score -->
+        <div class="insight-card bts-card">
+          <p class="card-eyebrow">Brand Trust Score</p>
+          <p class="bts-big" [style.color]="btsColor(bts.overall)">{{ bts.overall }}<span>/100</span></p>
+          <div class="bts-verdict">
+            <span *ngIf="bts.overall >= 70" class="verdict good">Strong performance</span>
+            <span *ngIf="bts.overall >= 50 && bts.overall < 70" class="verdict mid">Room for improvement</span>
+            <span *ngIf="bts.overall < 50" class="verdict bad">Needs attention</span>
+          </div>
+          <div class="sub-mini">
+            <div class="sub-mini-row" *ngFor="let row of [
+              { label: 'Visibility', val: bts.visibility_index, color: 'var(--blue-600)' },
+              { label: 'Accuracy', val: bts.accuracy_rate, color: '#16a34a' },
+              { label: 'Sentiment', val: bts.sentiment_score, color: 'var(--gold-500)' },
+              { label: 'Hallucination', val: bts.hallucination_rate, color: '#ef4444' }
+            ]">
+              <span>{{ row.label }}</span>
+              <div class="mini-track"><div class="mini-fill" [style.width.%]="row.val" [style.background]="row.color"></div></div>
+              <span>{{ row.val }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Best / Worst AI -->
+        <div class="insight-card highlights-card">
+          <p class="card-eyebrow">AI Spotlight</p>
+
+          <div class="spotlight-row" *ngIf="bestAI">
+            <div class="spotlight-left">
+              <span class="spot-dot" [style.background]="aiColor(bestAI[0])"></span>
+              <div>
+                <p class="spot-name">{{ aiLabel(bestAI[0]) }}</p>
+                <p class="spot-tag good-tag">Best performing</p>
+              </div>
+            </div>
+            <span class="spot-score" [style.color]="btsColor(bestAI[1].bts)">{{ bestAI[1].bts }}</span>
+          </div>
+
+          <div class="spotlight-divider"></div>
+
+          <div class="spotlight-row" *ngIf="worstAI">
+            <div class="spotlight-left">
+              <span class="spot-dot" [style.background]="aiColor(worstAI[0])"></span>
+              <div>
+                <p class="spot-name">{{ aiLabel(worstAI[0]) }}</p>
+                <p class="spot-tag bad-tag">Needs most work</p>
+              </div>
+            </div>
+            <span class="spot-score" [style.color]="btsColor(worstAI[1].bts)">{{ worstAI[1].bts }}</span>
+          </div>
+
+          <div class="spotlight-divider"></div>
+
+          <!-- Issue summary -->
+          <div class="issue-type-row" *ngFor="let s of issueSummary">
+            <span class="issue-type-dot" [style.background]="s.color"></span>
+            <span class="issue-type-name">{{ s.type | titlecase }}</span>
+            <span class="issue-type-count">{{ s.count }} issue{{ s.count === 1 ? '' : 's' }}</span>
+          </div>
+          <p class="no-issues-note" *ngIf="issueSummary.length === 0">
+            ✓ No issues detected across all AI platforms
+          </p>
+        </div>
+
       </div>
-      <h3>Insights coming soon</h3>
-      <p>Detailed analysis of brand sentiment, keyword associations, and competitor positioning across AI platforms.</p>
+
+      <!-- AI Visibility table -->
+      <div class="section-head">
+        <h3>Brand Visibility by AI</h3>
+        <p>How many of {{ queries.length }} queries each AI included your brand in its response.</p>
+      </div>
+      <div class="visibility-grid">
+        <div class="vis-card" *ngFor="let ai of aiKeys">
+          <div class="vis-top">
+            <span class="vis-dot" [style.background]="aiColor(ai)"></span>
+            <span class="vis-name">{{ aiLabel(ai) }}</span>
+          </div>
+          <p class="vis-count" [style.color]="aiColor(ai)">{{ mentionCount(ai) }}<span>/{{ queries.length }}</span></p>
+          <div class="vis-bar-track">
+            <div class="vis-bar-fill"
+              [style.width.%]="(mentionCount(ai) / queries.length) * 100"
+              [style.background]="aiColor(ai)">
+            </div>
+          </div>
+          <p class="vis-pct">{{ ((mentionCount(ai) / queries.length) * 100) | number:'1.0-0' }}% mention rate</p>
+        </div>
+      </div>
+
+      <!-- Top optimisation opportunities -->
+      <div *ngIf="topOpportunities.length > 0">
+        <div class="section-head">
+          <h3>Top Opportunities</h3>
+          <p>Prioritised fixes ranked by projected BTS gain.</p>
+        </div>
+        <div class="opp-list">
+          <div class="opp-card" *ngFor="let opp of topOpportunities; let i = index">
+            <div class="opp-rank">#{{ i + 1 }}</div>
+            <div class="opp-body">
+              <div class="opp-top">
+                <span class="opp-ai-dot" [style.background]="aiColor(opp.ai)"></span>
+                <span class="opp-ai">{{ aiLabel(opp.ai) }}</span>
+                <span class="opp-type" [class]="'type-' + opp.type">{{ opp.type }}</span>
+                <span class="opp-gain">+{{ opp.bts_gain }} BTS</span>
+              </div>
+              <p class="opp-desc">{{ opp.description }}</p>
+              <div class="opp-fix">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>{{ opp.fix }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sentiment by AI -->
+      <div class="section-head">
+        <h3>Sentiment Analysis</h3>
+        <p>How AI platforms frame your brand — positive, neutral, or negative.</p>
+      </div>
+      <div class="sentiment-grid">
+        <div class="sent-card" *ngFor="let ai of aiKeys">
+          <div class="sent-header">
+            <span class="sent-dot" [style.background]="aiColor(ai)"></span>
+            <span class="sent-name">{{ aiLabel(ai) }}</span>
+          </div>
+          <div class="sent-bars">
+            <div class="sent-row">
+              <span>Positive</span>
+              <div class="sent-track">
+                <div class="sent-fill" [style.width.%]="sentimentPct(ai,'positive')" style="background:#16a34a"></div>
+              </div>
+              <span>{{ sentimentPct(ai,'positive') }}%</span>
+            </div>
+            <div class="sent-row">
+              <span>Neutral</span>
+              <div class="sent-track">
+                <div class="sent-fill" [style.width.%]="sentimentPct(ai,'neutral')" style="background:var(--gray-400)"></div>
+              </div>
+              <span>{{ sentimentPct(ai,'neutral') }}%</span>
+            </div>
+            <div class="sent-row">
+              <span>Negative</span>
+              <div class="sent-track">
+                <div class="sent-fill" [style.width.%]="sentimentPct(ai,'negative')" style="background:#ef4444"></div>
+              </div>
+              <span>{{ sentimentPct(ai,'negative') }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 </div>
