@@ -20,13 +20,18 @@
 
 ## Tech Stack
 
-| Layer | Technology |    |       |        |      |
-|---|---|---|---|---|
-| Frontend | Angular 19, TypeScript, standalone components |
-| Backend | FastAPI (Python), Uvicorn |
-| Database | SQLite via SQLAlchemy 2.0 |
-| Auth | JWT (HS256), bcrypt |
-| AI | Google Gemini 2.5 Flash (with fallback) | OPEN AI  | CLAUDE AI  | PREPLEXCITY
+## Technology Stack
+
+| Layer      | Technology |
+|-------------|-------------|
+| Frontend    | Angular 19, TypeScript, Standalone Components |
+| Backend     | FastAPI (Python), Uvicorn |
+| Database    | SQLite with SQLAlchemy 2.0 |
+| Authentication | JWT (HS256), bcrypt |
+| AI Providers | Google Gemini 2.5 Flash (Primary) |
+|             | OpenAI |
+|             | Anthropic Claude |
+|             | Perplexity |
 
 ---
 
