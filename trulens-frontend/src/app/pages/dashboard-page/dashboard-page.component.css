@@ -1,0 +1,224 @@
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--cream);
+}
+
+.main-content {
+  margin-left: 240px;
+  flex: 1;
+  padding: 0;
+  max-width: calc(100vw - 240px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Welcome banner ── */
+.welcome-banner {
+  background: var(--blue-900);
+  padding: 2rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid var(--gold-500);
+}
+
+.banner-text h3 {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.01em;
+}
+
+.banner-text p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 300;
+}
+
+.btn-cta {
+  padding: 0.72rem 1.6rem;
+  background: var(--gold-500);
+  color: var(--blue-900);
+  border: none;
+  border-radius: var(--radius-xs);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s ease, transform 0.12s ease;
+}
+
+.btn-cta:hover {
+  background: var(--gold-600);
+  transform: translateY(-1px);
+}
+
+.btn-cta:active {
+  transform: translateY(0);
+}
+
+/* ── Inner content area ── */
+.inner {
+  padding: 2.25rem 3rem;
+  flex: 1;
+}
+
+/* ── Metrics ── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem 1.6rem 1.35rem;
+  border: 1px solid rgba(26, 23, 20, 0.06);
+  border-top: 2px solid transparent;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.metric-card:first-child {
+  border-top-color: var(--gold-500);
+}
+
+.metric-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.metric-label {
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+
+.metric-value {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: var(--blue-900);
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 0.55rem;
+}
+
+.metric-value.gold {
+  color: var(--gold-600);
+}
+
+.unit {
+  font-size: 1rem;
+  color: var(--gray-400);
+  font-family: var(--font-body);
+  font-weight: 300;
+}
+
+.metric-trend {
+  font-size: 0.74rem;
+  color: var(--gray-400);
+}
+
+.metric-trend.positive {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.metric-trend.neutral {
+  color: var(--gray-400);
+}
+
+/* ── Content grid ── */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.25rem;
+}
+
+.content-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(26, 23, 20, 0.06);
+  overflow: hidden;
+}
+
+.content-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid rgba(26, 23, 20, 0.06);
+}
+
+.content-card-head h3 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--blue-900);
+  letter-spacing: -0.01em;
+}
+
+.content-card-head a {
+  font-size: 0.75rem;
+  color: var(--gold-600);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.content-card-head a:hover {
+  color: var(--gold-500);
+}
+
+.empty-state {
+  padding: 3.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.empty-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--cream-2);
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-600);
+  margin-bottom: 0.25rem;
+  border: 1px solid rgba(201, 147, 58, 0.15);
+}
+
+.empty-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.empty-state p {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+}
+
+.empty-state a {
+  font-size: 0.8rem;
+  color: var(--blue-700);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.empty-state a:hover {
+  color: var(--blue-600);
+}

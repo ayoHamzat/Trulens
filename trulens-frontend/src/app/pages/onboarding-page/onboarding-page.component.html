@@ -1,0 +1,80 @@
+<div class="onboarding-layout">
+
+  <!-- Top bar -->
+  <header class="onboarding-header">
+    <div class="header-logo">
+      <span class="logo-mark">T</span>
+      <span class="logo-name">TruLens</span>
+    </div>
+    <span class="step-badge">Step 1 of 2 — Business Profile</span>
+  </header>
+
+  <!-- Body -->
+  <div class="onboarding-body">
+    <div class="onboarding-card">
+
+      <div class="card-header">
+        <div class="biz-type-chip">{{ businessType }}</div>
+        <h2>Tell us about your business</h2>
+        <p>Gemini is generating 7 tailored questions for your {{ businessType }} profile.</p>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-state">
+        <div class="pulse-ring">
+          <div class="spinner"></div>
+        </div>
+        <p class="loading-title">Generating your questions…</p>
+        <p class="loading-sub">Gemini is crafting personalised questions for your {{ businessType }} business.</p>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="error && !loading" class="error-state">
+        <p><strong>Could not reach Gemini.</strong></p>
+        <p class="error-detail">{{ errorMessage }}</p>
+        <button class="btn-retry" (click)="loadQuestions()">Retry</button>
+      </div>
+
+      <!-- Form -->
+      <form *ngIf="!loading && !error" (ngSubmit)="saveProfile()" class="profile-form">
+
+        <div class="field" *ngFor="let q of questions; let i = index">
+          <label>
+            <span class="q-num">{{ i + 1 }}</span>
+            {{ q.label }}
+          </label>
+
+          <input
+            *ngIf="q.input_type === 'text'"
+            [(ngModel)]="answers[q.field_name]"
+            [name]="q.field_name"
+            placeholder="Your answer…"
+          />
+
+          <select
+            *ngIf="q.input_type === 'select'"
+            [(ngModel)]="answers[q.field_name]"
+            [name]="q.field_name"
+          >
+            <option value="" disabled selected>Select an option</option>
+            <option *ngFor="let opt of q.options" [value]="opt">{{ opt }}</option>
+          </select>
+
+          <textarea
+            *ngIf="q.input_type === 'textarea'"
+            [(ngModel)]="answers[q.field_name]"
+            [name]="q.field_name"
+            rows="3"
+            placeholder="Your answer…"
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-cta">Save and Continue &rarr;</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>

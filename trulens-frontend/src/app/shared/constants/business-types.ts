@@ -1,0 +1,17 @@
+export const BUSINESS_TYPES: string[] = [
+  'Apparel & Fashion',
+  'Electronics',
+  'Home & Garden',
+  'Health & Beauty',
+  'Sports & Outdoors',
+  'Food & Beverage',
+  'Toys & Games',
+  'Books & Media',
+  'Jewelry & Accessories',
+  'Automotive',
+  'Pet Supplies',
+  'Office Supplies',
+  'Arts & Crafts',
+  'Baby & Kids',
+  'Other',
+];

@@ -1,0 +1,78 @@
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+
+    <!-- Welcome banner -->
+    <div class="welcome-banner">
+      <div class="banner-text">
+        <h3>Good to see you back</h3>
+        <p>Here's how your brand is performing across AI platforms today.</p>
+      </div>
+      <button class="btn-cta" routerLink="/simulations">Run New Simulation</button>
+    </div>
+
+    <div class="inner">
+
+      <!-- Metric cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p class="metric-label">AI Visibility Score</p>
+          <p class="metric-value gold">74<span class="unit">/100</span></p>
+          <p class="metric-trend positive">&#8593; +6 vs last week</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Mention Rate</p>
+          <p class="metric-value">62<span class="unit">%</span></p>
+          <p class="metric-trend positive">&#8593; +3% vs last week</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Sentiment Score</p>
+          <p class="metric-value">8.1<span class="unit">/10</span></p>
+          <p class="metric-trend neutral">No change</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Simulations Run</p>
+          <p class="metric-value">3</p>
+          <p class="metric-trend neutral">This month</p>
+        </div>
+      </div>
+
+      <!-- Content grid -->
+      <div class="content-grid">
+
+        <div class="content-card">
+          <div class="content-card-head">
+            <h3>Recent Simulations</h3>
+            <a routerLink="/simulations">View all</a>
+          </div>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+            </div>
+            <p>No simulations run yet.</p>
+            <a routerLink="/simulations">Start your first one &rarr;</a>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="content-card-head">
+            <h3>Top Insights</h3>
+            <a routerLink="/insights">View all</a>
+          </div>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <p>Insights will appear after your first simulation.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
