@@ -21,7 +21,7 @@
 ## Tech Stack
 
 | Layer | Technology |    |       |        |      |
-|---|---|
+|---|---|---|---|---|
 | Frontend | Angular 19, TypeScript, standalone components |
 | Backend | FastAPI (Python), Uvicorn |
 | Database | SQLite via SQLAlchemy 2.0 |
