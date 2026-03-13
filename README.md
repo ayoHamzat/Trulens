@@ -26,7 +26,7 @@
 | Backend | FastAPI (Python), Uvicorn |
 | Database | SQLite via SQLAlchemy 2.0 |
 | Auth | JWT (HS256), bcrypt |
-| AI | Google Gemini 2.5 Flash (with fallback) |
+| AI | Google Gemini 2.5 Flash (with fallback) | OPEN AI  | CLAUDE AI  | PREPLEXCITY
 
 ---
 
