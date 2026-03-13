@@ -20,7 +20,7 @@
 
 ## Tech Stack
 
-| Layer | Technology |
+| Layer | Technology |    |       |        |      |
 |---|---|
 | Frontend | Angular 19, TypeScript, standalone components |
 | Backend | FastAPI (Python), Uvicorn |
