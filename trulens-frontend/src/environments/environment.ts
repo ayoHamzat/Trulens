@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  geminiApiKey: 'AIzaSyB5ukBB3KwiVZxaGwarJiGrxZOUzOjG9vs',
+  apiUrl: 'http://localhost:8000',
 };

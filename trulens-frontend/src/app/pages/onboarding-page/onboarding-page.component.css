@@ -320,3 +320,9 @@
 .btn-cta:active {
   transform: translateY(0);
 }
+
+.btn-cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

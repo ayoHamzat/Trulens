@@ -4,7 +4,7 @@
   <header class="onboarding-header">
     <div class="header-logo">
       <span class="logo-mark">T</span>
-      <span class="logo-name">TruLens</span>
+      <span class="logo-name">Trulens</span>
     </div>
     <span class="step-badge">Step 1 of 2 — Business Profile</span>
   </header>
@@ -70,7 +70,9 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-cta">Save and Continue &rarr;</button>
+          <button type="submit" class="btn-cta" [disabled]="saving">
+            {{ saving ? 'Saving…' : 'Save and Continue →' }}
+          </button>
         </div>
 
       </form>

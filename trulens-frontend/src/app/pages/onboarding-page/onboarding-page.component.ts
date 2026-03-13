@@ -1,9 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GeminiService, OnboardingQuestion } from '../../services/gemini.service';
 import { UserProfileService } from '../../services/user-profile.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-onboarding-page',
@@ -15,9 +17,11 @@ import { UserProfileService } from '../../services/user-profile.service';
 export class OnboardingPageComponent implements OnInit {
   private gemini = inject(GeminiService);
   private userProfile = inject(UserProfileService);
+  private http = inject(HttpClient);
   private router = inject(Router);
 
   loading = true;
+  saving = false;
   error = false;
   errorMessage = '';
   questions: OnboardingQuestion[] = [];
@@ -47,14 +51,24 @@ export class OnboardingPageComponent implements OnInit {
       error: (err) => {
         this.error = true;
         this.loading = false;
-        this.errorMessage = err?.error?.error?.message || err?.message || JSON.stringify(err);
-        console.error('Gemini error:', err);
+        this.errorMessage = err?.error?.detail || err?.message || 'Failed to load questions.';
       }
     });
   }
 
   saveProfile(): void {
-    console.log('Profile answers:', this.answers);
-    this.router.navigate(['/dashboard']);
+    this.saving = true;
+
+    this.http.post(`${environment.apiUrl}/onboarding/save`, { answers: this.answers }).subscribe({
+      next: () => {
+        this.saving = false;
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        // Navigate anyway — profile save is non-critical
+        this.saving = false;
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
 }

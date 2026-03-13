@@ -1,127 +1,213 @@
 <div class="auth-layout">
-
-  <!-- LEFT: Brand Panel -->
   <div class="brand-panel">
-    <div class="brand-inner">
+    <div class="brand-glow brand-glow-1"></div>
+    <div class="brand-glow brand-glow-2"></div>
 
-      <div class="brand-logo">
+    <div class="brand-inner">
+      <div class="brand-logo reveal reveal-1">
         <span class="logo-mark">T</span>
-        <span class="logo-name">TruLens</span>
+        <span class="logo-name">Trulens</span>
       </div>
 
       <div class="brand-content">
-        <p class="eyebrow">AI Brand Intelligence</p>
-        <h1>Your brand’s  <em>Tru</em>th,<br> protected in conversations you can't see</h1>
-        <div class="brand-rule"></div>
-        <p class="brand-desc">
-            Trust begins with truth
+        <p class="eyebrow reveal reveal-2">Trust begins with truth</p>
+
+        <h1 class="reveal reveal-3">
+          Your brand’s <em>Tru</em>th,<br />
+          protected in conversations<br />
+          you can’t see
+        </h1>
+
+        <div class="brand-rule reveal reveal-4"></div>
+
+        <p class="brand-desc reveal reveal-5">
+          Trulens helps brands understand how AI assistants describe them,
+          compare them, and influence decisions before customers ever reach
+          your website.
         </p>
       </div>
 
-      <div class="trust-row">
-        <div class="trust-item"><span class="trust-dot"></span>Real-time monitoring across 3+ AI platforms</div>
-        <div class="trust-item"><span class="trust-dot"></span>AI-generated brand visibility score</div>
-        <div class="trust-item"><span class="trust-dot"></span>Actionable insights, no technical setup</div>
+      <div class="trust-row reveal reveal-6">
+        <div class="trust-item floating-pill delay-1">
+          <span class="trust-dot"></span>
+          Real-time monitoring across major AI assistants
+        </div>
+        <div class="trust-item floating-pill delay-2">
+          <span class="trust-dot"></span>
+          Brand visibility scoring built for modern teams
+        </div>
+        <div class="trust-item floating-pill delay-3">
+          <span class="trust-dot"></span>
+          Actionable insights without technical setup
+        </div>
       </div>
 
-      <div class="brand-stats">
-        <div class="stat">
+      <div class="brand-stats reveal reveal-7">
+        <div class="stat-card">
           <span class="stat-num">3+</span>
-          <span class="stat-label">AI platforms</span>
+          <span class="stat-label">AI platforms tracked</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
+
+        <div class="stat-card">
           <span class="stat-num">98%</span>
-          <span class="stat-label">Accuracy rate</span>
+          <span class="stat-label">Brand response accuracy</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
+
+        <div class="stat-card">
           <span class="stat-num">24h</span>
           <span class="stat-label">To first insight</span>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- RIGHT: Form Panel -->
   <div class="form-panel">
     <div class="form-inner">
-
-      <div class="form-header">
+      <div class="form-header reveal reveal-2">
         <h2>{{ mode === 'login' ? 'Welcome back' : 'Get started' }}</h2>
-        <p>{{ mode === 'login' ? 'Sign in to your TruLens dashboard.' : 'Start monitoring your brand visibility today.' }}</p>
+        <p>
+          {{
+            mode === 'login'
+              ? 'Sign in to continue monitoring your brand across AI search.'
+              : 'Start tracking how AI assistants talk about your brand.'
+          }}
+        </p>
       </div>
 
-      <div class="form-card">
+      <div class="form-card reveal reveal-3">
         <div class="form-card-top"></div>
-        <div class="form-card-body">
 
+        <div class="form-card-body">
           <div class="tab-toggle">
-            <button [class.active]="mode === 'login'" (click)="mode = 'login'">Sign In</button>
-            <button [class.active]="mode === 'signup'" (click)="mode = 'signup'">Sign Up</button>
+            <button [class.active]="mode === 'login'" (click)="mode = 'login'">
+              Sign In
+            </button>
+            <button [class.active]="mode === 'signup'" (click)="mode = 'signup'">
+              Sign Up
+            </button>
           </div>
 
-          <!-- Sign Up -->
           <form *ngIf="mode === 'signup'" (ngSubmit)="signUp()" #signUpForm="ngForm" class="auth-form">
             <div class="field">
               <label>Your Name</label>
-              <input name="ownerName" [(ngModel)]="signUpData.ownerName" placeholder="Jane Smith" required />
+              <input
+                name="ownerName"
+                [(ngModel)]="signUpData.ownerName"
+                placeholder="Jane Smith"
+                required
+              />
             </div>
+
             <div class="field">
               <label>Business Email</label>
-              <input name="email" [(ngModel)]="signUpData.email" type="email" placeholder="jane@yourbrand.com" required />
+              <input
+                name="email"
+                [(ngModel)]="signUpData.email"
+                type="email"
+                placeholder="jane@yourbrand.com"
+                required
+              />
             </div>
+
             <div class="field">
               <label>Password</label>
-              <input name="password" [(ngModel)]="signUpData.password" type="password" placeholder="Create a strong password" required />
+              <input
+                name="password"
+                [(ngModel)]="signUpData.password"
+                type="password"
+                placeholder="Create a strong password"
+                required
+              />
             </div>
+
             <div class="field">
               <label>Business Name</label>
-              <input name="businessName" [(ngModel)]="signUpData.businessName" placeholder="Your Brand Inc." required />
+              <input
+                name="businessName"
+                [(ngModel)]="signUpData.businessName"
+                placeholder="Your Brand Inc."
+                required
+              />
             </div>
+
             <div class="field">
               <label>Business Type</label>
-              <select name="businessType" [(ngModel)]="signUpData.businessType" required>
+              <select
+                name="businessType"
+                [(ngModel)]="signUpData.businessType"
+                required
+              >
                 <option value="" disabled selected>Select your industry</option>
-                <option *ngFor="let type of businessTypes" [value]="type">{{ type }}</option>
+                <option *ngFor="let type of businessTypes" [value]="type">
+                  {{ type }}
+                </option>
               </select>
             </div>
+
             <div class="field" *ngIf="signUpData.businessType === 'Other'">
               <label>Describe Your Business</label>
-              <input name="otherBusinessType" [(ngModel)]="signUpData.otherBusinessType" placeholder="What does your business sell?" required />
+              <input
+                name="otherBusinessType"
+                [(ngModel)]="signUpData.otherBusinessType"
+                placeholder="What does your business sell?"
+                required
+              />
             </div>
-            <button type="submit" class="btn-cta">Create Account</button>
+
+            <div class="form-error" *ngIf="errorMessage && mode === 'signup'">{{ errorMessage }}</div>
+
+            <button type="submit" class="btn-cta" [disabled]="loading">
+              {{ loading ? 'Creating account…' : 'Create Account' }}
+            </button>
+
             <p class="form-note">
               Already have an account?
               <a href="#" (click)="mode = 'login'; $event.preventDefault()">Sign in</a>
             </p>
           </form>
 
-          <!-- Sign In -->
           <form *ngIf="mode === 'login'" (ngSubmit)="login()" class="auth-form">
             <div class="field">
               <label>Email</label>
-              <input name="loginEmail" [(ngModel)]="loginData.email" type="email" placeholder="your@email.com" required />
+              <input
+                name="loginEmail"
+                [(ngModel)]="loginData.email"
+                type="email"
+                placeholder="your@email.com"
+                required
+              />
             </div>
+
             <div class="field">
               <label>Password</label>
-              <input name="loginPassword" [(ngModel)]="loginData.password" type="password" placeholder="Your password" required />
+              <input
+                name="loginPassword"
+                [(ngModel)]="loginData.password"
+                type="password"
+                placeholder="Your password"
+                required
+              />
             </div>
+
             <div class="field-meta">
               <a href="#" class="forgot-link">Forgot password?</a>
             </div>
-            <button type="submit" class="btn-cta">Sign In</button>
+
+            <div class="form-error" *ngIf="errorMessage && mode === 'login'">{{ errorMessage }}</div>
+
+            <button type="submit" class="btn-cta" [disabled]="loading">
+              {{ loading ? 'Signing in…' : 'Sign In' }}
+            </button>
+
             <p class="form-note">
-              New to TruLens?
-              <a href="#" (click)="mode = 'signup'; $event.preventDefault()">Create a free account</a>
+              New to Trulens?
+              <a href="#" (click)="mode = 'signup'; $event.preventDefault()">
+                Create a free account
+              </a>
             </p>
           </form>
-
         </div>
       </div>
-
     </div>
   </div>
-
 </div>

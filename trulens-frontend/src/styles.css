@@ -1,5 +1,5 @@
 /* ============================================================
-   TruLens Design System — Global Styles
+   Trulens Design System — Global Styles
    Palette: 50% blue · 30% warm white/cream · 20% gold
    ============================================================ */
 
@@ -11,7 +11,6 @@
 
 :root {
   /* Blues */
-  --blue-950: #070f1a;
   --blue-900: #0b1f38;
   --blue-800: #142d4f;
   --blue-700: #1c3f6e;
